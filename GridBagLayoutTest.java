@@ -83,7 +83,7 @@ public class GridBagLayoutTest extends JFrame {
         clientNameLabel = new JLabel("Фамилие читателя -->", SwingConstants.CENTER);
         bookName = new JTextField(10);
         clientName = new JTextField(10);
-        changeBut = new JButton("Изменить");
+        changeBut = new JButton("Обновить запись");
         changeBut.setToolTipText("Обновление записей для книг и читателей.Сделайте изменения в списке выборки.Строка должна быть выделена");
         changeBut.setBackground(Color.PINK);
         addBut = new JButton("Добавить запись");
