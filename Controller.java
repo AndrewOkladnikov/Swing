@@ -2,11 +2,13 @@ package ru.learning.swing.myLibrary;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Controller {
     DAO dao;
     GridBagLayoutTest view;
+    DefaultTableModel model;
 
     public Controller(DAO dao, GridBagLayoutTest view) {
         this.dao = dao;
@@ -14,27 +16,26 @@ public class Controller {
     }
 
     public void getTakenBooks() {
-        DefaultTableModel model = dao.getTakenBooks();
-        //view.getTable().getColumnModel().getColumn(0).setMaxWidth(15);
+        model = dao.getTakenBooks();
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
 
-    public void getBooks() {
-        DefaultTableModel model = dao.getAllBooks();
+    public void getBooksInStock() {
+        model = dao.getAllBooks();
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
 
     public void getReaders() {
-        DefaultTableModel model = dao.getAllReaders();
+        model = dao.getAllReaders();
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
 
     public void addBook() {
-        dao.setLastTableName("books");
-        DefaultTableModel model = dao.getBooksDtm();
+        dao.setTableName("books");
+        model = dao.getBooksDtm();
         if (model.getRowCount() == 0) model.addRow(new String[model.getColumnCount()]);
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
@@ -46,19 +47,38 @@ public class Controller {
     }
 
     public void addReader() {
-        dao.setLastTableName("readers");
-        DefaultTableModel model = dao.getReadersDtm();
+        dao.setTableName("readers");
+        model = dao.getReadersDtm();
         if (model.getRowCount() == 0) model.addRow(new String[model.getColumnCount()]);
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
 
     public void addTakenBook() {
-        dao.setLastTableName("taken_books");
-        DefaultTableModel model = dao.getTakenBooksDtm();
+        model = dao.getTakenBooksDtm();
+        dao.setTableName("taken_books");
         if (model.getRowCount() == 0) model.addRow(new String[model.getColumnCount()]);
+        fillDatesForTable(model);
+
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
+    }
+
+    private void fillDatesForTable(DefaultTableModel model) {
+        LocalDate dateNow = LocalDate.now();
+        LocalDate plusMonths = dateNow.plusMonths(1);
+        Object valueAt = model.getValueAt(0, 3);
+        try {
+            LocalDate.parse((String) valueAt);
+        } catch (Exception e) {
+            model.setValueAt(dateNow, 0, 3);
+        }
+        valueAt = model.getValueAt(0, 4);
+        try {
+            LocalDate.parse((String) valueAt);
+        } catch (Exception e) {
+            model.setValueAt(plusMonths, 0, 4);
+        }
     }
 
     public void deleteRecord() {
@@ -72,14 +92,14 @@ public class Controller {
         }
     }
 
-    public void findReader(JTextField clientName) {
-        DefaultTableModel model = dao.getUser(clientName);
+    public void findReaderByTemplate(JTextField clientName) {
+        model = dao.getUser(clientName);
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
 
-    public void findBook(JTextField bookName) {
-        DefaultTableModel model = dao.getBook(bookName);
+    public void findBookByTemplates(JTextField bookName) {
+        model = dao.getBook(bookName);
         view.setTableModel(model);
         view.getTable().getColumnModel().getColumn(0).setMaxWidth(20);
     }
@@ -89,15 +109,16 @@ public class Controller {
         dao.addRecord(table);
     }
 
-    public void setReferencedIndex() {
+    public void setReferencesToTakenBooks() {
         int rowIndex = view.getTable().getSelectedRow();
         Long number = (Long) view.getTable().getValueAt(rowIndex, 0);
-        if(Objects.equals(dao.getLastTableName(), "taken_books"))return;
+        if (Objects.equals(dao.getCurrentTableName(), "taken_books")) return;
         System.out.println(number);
-        if (dao.getTakenBooksDtm().getRowCount() == 0) dao.getTakenBooksDtm().addRow(new String[dao.getTakenBooksDtm().getColumnCount()]);
-        if (Objects.equals(dao.getLastTableName(), "books"))
+        if (dao.getTakenBooksDtm().getRowCount() == 0)
+            dao.getTakenBooksDtm().addRow(new String[dao.getTakenBooksDtm().getColumnCount()]);
+        if (Objects.equals(dao.getCurrentTableName(), "books"))
             dao.getTakenBooksDtm().setValueAt(number, 0, 1);
-        if (Objects.equals(dao.getLastTableName(), "readers"))
+        if (Objects.equals(dao.getCurrentTableName(), "readers"))
             dao.getTakenBooksDtm().setValueAt(number, 0, 2);
     }
 }

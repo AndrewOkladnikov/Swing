@@ -21,7 +21,7 @@ public class GridBagLayoutTest extends JFrame {
     }
 
     private void initListeners() {
-        booksBut.addActionListener((ActionEvent e) -> {controller.getBooks();});
+        booksBut.addActionListener((ActionEvent e) -> {controller.getBooksInStock();});
         readersBut.addActionListener((ActionEvent e) -> {controller.getReaders();});
         renderedBooksBut.addActionListener((ActionEvent e) -> {controller.getTakenBooks();});
         addBookBut.addActionListener((ActionEvent e) -> {controller.addBook();});
@@ -30,12 +30,11 @@ public class GridBagLayoutTest extends JFrame {
         changeBut.addActionListener((ActionEvent e) -> {controller.updateRecord();});
         addBut.addActionListener((ActionEvent e) -> {controller.addRecord();});
         deleteBut.addActionListener((ActionEvent e) -> {controller.deleteRecord();});
-        findUser.addActionListener((ActionEvent e) -> {controller.findReader(clientName);});
-        findBook.addActionListener((ActionEvent e) -> {controller.findBook(bookName);});
+        findUser.addActionListener((ActionEvent e) -> {controller.findReaderByTemplate(clientName);});
+        findBook.addActionListener((ActionEvent e) -> {controller.findBookByTemplates(bookName);});
         table.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
-                controller.setReferencedIndex();
+                controller.setReferencesToTakenBooks();
             }
         });
     }
@@ -89,7 +88,7 @@ public class GridBagLayoutTest extends JFrame {
         addBut = new JButton("Добавить запись");
         addBut.setBackground(Color.PINK);
         addBut.setToolTipText("Добавить новую запись");
-        booksBut = new JButton("Книги");
+        booksBut = new JButton("Доступные книги");
         readersBut = new JButton("Пользователи");
         renderedBooksBut = new JButton("Выданные книги");
         addBookBut = new JButton("Добавить книгу");
@@ -98,8 +97,8 @@ public class GridBagLayoutTest extends JFrame {
         deleteBut = new JButton("Удалить запись");
         deleteBut.setToolTipText("Выделите строку из списка и нажмите эту кнопку.");
         deleteBut.setBackground(Color.PINK);
-        findUser = new JButton("Найти читателя");
-        findBook = new JButton("Найти книгу");
+        findUser = new JButton("Найти читателя по шаблону");
+        findBook = new JButton("Найти книгу по шаблону");
     }
 
     public void setController(Controller controller) {this.controller = controller;}
